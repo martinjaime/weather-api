@@ -1,4 +1,4 @@
-package me.martinjai.weatherapi
+package me.martinjai.weatherapi.models
 
 import cats.data.NonEmptyList
 import cats.effect.IO
@@ -10,7 +10,7 @@ import org.http4s.circe._
 
 import java.time.ZoneId
 
-object WeatherModels {
+object OpenWeatherApiModels {
   implicit val zoneIdDecoder: Decoder[ZoneId] = Decoder.decodeString.emap { str =>
     Either.catchNonFatal(ZoneId.of(str)).left.map(t => s"Could not parse ZoneId: ${t.getMessage}")
   }

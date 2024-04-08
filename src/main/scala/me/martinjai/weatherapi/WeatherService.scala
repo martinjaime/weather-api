@@ -6,7 +6,7 @@ import org.http4s.Method._
 import org.http4s.client.Client
 import org.http4s.client.dsl.io._
 import org.http4s.implicits._
-import me.martinjai.weatherapi.WeatherModels._
+import me.martinjai.weatherapi.models.OpenWeatherApiModels._
 import org.http4s.circe.CirceEntityCodec.circeEntityDecoder
 
 trait WeatherService {

@@ -2,7 +2,7 @@ package me.martinjai.weatherapi
 
 import cats.data.NonEmptyList
 import cats.effect.IO
-import me.martinjai.weatherapi.WeatherModels.WeatherRes
+import me.martinjai.weatherapi.models.OpenWeatherApiModels._
 import org.http4s._
 import org.http4s.implicits._
 import munit.CatsEffectSuite
@@ -17,9 +17,9 @@ class WeatherServiceSpec extends CatsEffectSuite with munit.ClientSuite {
     timezone = ZoneId.of("UTC"),
     timezone_offset = 0,
     alerts = List.empty,
-    current = WeatherModels.CurrentWeatherMetadata(
+    current = CurrentWeatherMetadata(
       temp = 0.0,
-      weather = NonEmptyList.one(WeatherModels.CurrentWeather("Clear"))
+      weather = NonEmptyList.one(CurrentWeather("Clear"))
     )
   )
 
