@@ -8,12 +8,11 @@ import org.http4s.dsl.io._
 
 object WeatherapiRoutes {
   def weatherRoutes(weatherService: WeatherService): HttpRoutes[IO] = {
-    HttpRoutes.of[IO] {
-      case GET -> Root / "current-weather" =>
-        for {
-          res <- weatherService.get
-          resp <- Ok(res.asJson)
-        } yield resp
+    HttpRoutes.of[IO] { case GET -> Root / "current-weather" =>
+      for {
+        res  <- weatherService.get
+        resp <- Ok(res.asJson)
+      } yield resp
     }
   }
 }

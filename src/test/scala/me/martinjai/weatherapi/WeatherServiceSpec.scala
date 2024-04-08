@@ -22,12 +22,14 @@ class WeatherServiceSpec extends CatsEffectSuite with munit.ClientSuite {
   )
 
   private[this] val returnWeather: IO[Response[IO]] = {
-    val client = Client.from {
-      case _ => IO(Response[IO](Status.Ok).withEntity(
-        weatherRes
-      ))
+    val client = Client.from { case _ =>
+      IO(
+        Response[IO](Status.Ok).withEntity(
+          weatherRes
+        )
+      )
     }
-    val request = Request[IO](Method.GET, uri"/current-weather")
+    val request        = Request[IO](Method.GET, uri"/current-weather")
     val weatherService = WeatherService.impl(client)
     WeatherapiRoutes.weatherRoutes(weatherService).orNotFound(request)
   }
