@@ -1,0 +1,49 @@
+package me.martinjai.weatherapi
+
+import cats.data.NonEmptyList
+import cats.effect.IO
+import io.circe.generic.semiauto._
+import io.circe.{Decoder, Encoder}
+import org.http4s._
+import org.http4s.circe._
+
+object WeatherModels {
+  final case class WeatherRes(
+    lat: Double,
+    lon: Double,
+    timezone: String,
+    timezone_offset: Int,
+    alerts: Option[List[WeatherAlert]],
+    current: CurrentWeatherMetadata,
+  )
+  object WeatherRes {
+    implicit val decoder: Decoder[WeatherRes] = deriveDecoder[WeatherRes]
+    implicit val entityDecoder: EntityDecoder[IO, WeatherRes] = jsonOf
+    implicit val encoder: Encoder[WeatherRes] = deriveEncoder[WeatherRes]
+    implicit val entityEncoder: EntityEncoder[IO, WeatherRes] = jsonEncoderOf
+  }
+
+  final case class CurrentWeatherMetadata(temp: Double, weather: NonEmptyList[CurrentWeather])
+  object CurrentWeatherMetadata {
+    implicit val decoder: Decoder[CurrentWeatherMetadata] = deriveDecoder[CurrentWeatherMetadata]
+    implicit val entityDecoder: EntityDecoder[IO, CurrentWeatherMetadata] = jsonOf
+    implicit val encoder: Encoder[CurrentWeatherMetadata] = deriveEncoder[CurrentWeatherMetadata]
+    implicit val entityEncoder: EntityEncoder[IO, CurrentWeatherMetadata] = jsonEncoderOf
+  }
+
+  final case class CurrentWeather(description: String)
+  object CurrentWeather {
+    implicit val decoder: Decoder[CurrentWeather] = deriveDecoder[CurrentWeather]
+    implicit val entityDecoder: EntityDecoder[IO, CurrentWeather] = jsonOf
+    implicit val encoder: Encoder[CurrentWeather] = deriveEncoder[CurrentWeather]
+    implicit val entityEncoder: EntityEncoder[IO, CurrentWeather] = jsonEncoderOf
+  }
+
+  final case class WeatherAlert(description: String)
+  object WeatherAlert {
+    implicit val decoder: Decoder[WeatherAlert] = deriveDecoder[WeatherAlert]
+    implicit val entityDecoder: EntityDecoder[IO, WeatherAlert] = jsonOf
+    implicit val encoder: Encoder[WeatherAlert] = deriveEncoder[WeatherAlert]
+    implicit val entityEncoder: EntityEncoder[IO, WeatherAlert] = jsonEncoderOf
+  }
+}
