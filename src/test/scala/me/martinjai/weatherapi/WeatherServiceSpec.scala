@@ -8,13 +8,15 @@ import org.http4s.implicits._
 import munit.CatsEffectSuite
 import org.http4s.client.Client
 
+import java.time.ZoneId
+
 class WeatherServiceSpec extends CatsEffectSuite with munit.ClientSuite {
   private val weatherRes = WeatherRes(
     lat = 0.0,
     lon = 0.0,
-    timezone = "UTC",
+    timezone = ZoneId.of("UTC"),
     timezone_offset = 0,
-    alerts = None,
+    alerts = List.empty,
     current = WeatherModels.CurrentWeatherMetadata(
       temp = 0.0,
       weather = NonEmptyList.one(WeatherModels.CurrentWeather("Clear"))

@@ -2,18 +2,26 @@ package me.martinjai.weatherapi
 
 import cats.data.NonEmptyList
 import cats.effect.IO
+import cats.implicits._
 import io.circe.generic.semiauto._
 import io.circe.{Decoder, Encoder}
 import org.http4s._
 import org.http4s.circe._
 
+import java.time.ZoneId
+
 object WeatherModels {
+  implicit val zoneIdDecoder: Decoder[ZoneId] = Decoder.decodeString.emap { str =>
+    Either.catchNonFatal(ZoneId.of(str)).left.map(t => s"Could not parse ZoneId: ${t.getMessage}")
+  }
+  implicit val zoneIdEncoder: Encoder[ZoneId] = Encoder.encodeString.contramap[ZoneId](_.toString)
+
   final case class WeatherRes(
       lat: Double,
       lon: Double,
-      timezone: String,
+      timezone: ZoneId,
       timezone_offset: Int,
-      alerts: Option[List[WeatherAlert]],
+      alerts: List[WeatherAlert],
       current: CurrentWeatherMetadata
   )
   object WeatherRes {
@@ -38,6 +46,10 @@ object WeatherModels {
     implicit val encoder: Encoder[CurrentWeather]                 = deriveEncoder[CurrentWeather]
     implicit val entityEncoder: EntityEncoder[IO, CurrentWeather] = jsonEncoderOf
   }
+
+  // Need a decoder because OpenWeather api will return a nullable value for alerts
+  implicit val weatherAlertListDecoder: Decoder[List[WeatherAlert]] =
+    Decoder.decodeOption(Decoder.decodeList[WeatherAlert]).map(_.getOrElse(List.empty))
 
   final case class WeatherAlert(description: String)
   object WeatherAlert {
