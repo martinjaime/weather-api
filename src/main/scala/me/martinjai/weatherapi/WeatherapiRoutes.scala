@@ -8,13 +8,14 @@ import org.http4s.dsl.io._
 import models.SimpleWeatherModel.WeatherResOps
 
 object WeatherapiRoutes {
-  def weatherRoutes(weatherService: WeatherService): HttpRoutes[IO] = {
-    HttpRoutes.of[IO] { case GET -> Root / "current-weather" =>
-      for {
-        openWeatherRes <- weatherService.get
-        result = openWeatherRes.toSimpleWeatherModel
-        response <- Ok(result.asJson)
-      } yield response
-    }
+  object LatQueryParam extends QueryParamDecoderMatcher[Double]("lat")
+  object LonQueryParam extends QueryParamDecoderMatcher[Double]("lon")
+
+  def weatherRoutes(weatherService: WeatherService): HttpRoutes[IO] = HttpRoutes.of[IO] {
+    case GET -> Root / "current-weather" :? LatQueryParam(lat) +& LonQueryParam(lon) =>
+      weatherService.requestCurrentWeather(lat, lon).flatMap { openWeatherRes =>
+        val result = openWeatherRes.toSimpleWeatherModel
+        Ok(result.asJson)
+      }
   }
 }
