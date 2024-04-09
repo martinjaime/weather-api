@@ -2,25 +2,13 @@ package me.martinjai.weatherapi.models
 
 import cats.data.NonEmptyList
 import cats.effect.IO
-import cats.implicits._
 import io.circe.generic.semiauto._
 import io.circe.{Decoder, Encoder}
 import org.http4s._
 import org.http4s.circe._
 
-import java.time.ZoneId
-
 object OpenWeatherApiModels {
-  implicit val zoneIdDecoder: Decoder[ZoneId] = Decoder.decodeString.emap { str =>
-    Either.catchNonFatal(ZoneId.of(str)).left.map(t => s"Could not parse ZoneId: ${t.getMessage}")
-  }
-  implicit val zoneIdEncoder: Encoder[ZoneId] = Encoder.encodeString.contramap[ZoneId](_.toString)
-
   final case class WeatherRes(
-      lat: Double,
-      lon: Double,
-      timezone: ZoneId,
-      timezone_offset: Int,
       alerts: List[WeatherAlert],
       current: CurrentWeatherMetadata
   )
