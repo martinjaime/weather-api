@@ -1,7 +1,8 @@
 package me.martinjai.weatherapi
 
-import cats.effect.IO
+import cats.effect.{IO, Resource}
 import com.comcast.ip4s._
+import me.martinjai.weatherapi.Config.AppConf
 import org.http4s.ember.client.EmberClientBuilder
 import org.http4s.ember.server.EmberServerBuilder
 import org.http4s.implicits._
@@ -12,7 +13,8 @@ object WeatherapiServer {
   def run: IO[Nothing] = {
     for {
       client <- EmberClientBuilder.default[IO].build
-      weatherService = WeatherService.impl(client)
+      config <- Resource.eval[IO, AppConf](Config.appConf)
+      weatherService = WeatherService.impl(client, config)
 
       httpApp = WeatherapiRoutes.weatherRoutes(weatherService).orNotFound
 
