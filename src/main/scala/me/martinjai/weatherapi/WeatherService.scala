@@ -19,7 +19,7 @@ object WeatherService {
 
   def impl(client: Client[IO], config: AppConf): WeatherService = new WeatherService {
     private def path(lat: Double, lon: Double) =
-      uri"https://api.openweathermap.org/data/3.0/onecall?exclude=hourly,daily,minutely&units=imperial&appid=d23caff1cf508fdaefbec39e17487848"
+      uri"https://api.openweathermap.org/data/3.0/onecall?exclude=hourly,daily,minutely&units=imperial"
         .withQueryParams(
           Map(
             "lat"   -> lat.toString,
