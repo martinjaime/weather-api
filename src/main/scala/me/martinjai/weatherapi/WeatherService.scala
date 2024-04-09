@@ -1,6 +1,6 @@
 package me.martinjai.weatherapi
 
-import cats.effect.IO
+import cats.effect._
 import cats.implicits._
 import me.martinjai.weatherapi.Config.AppConf
 import org.http4s.Method._
@@ -9,12 +9,13 @@ import org.http4s.client.dsl.io._
 import org.http4s.implicits._
 import models.OpenWeatherApiModels._
 import org.http4s.circe.CirceEntityCodec.circeEntityDecoder
+import com.typesafe.scalalogging.LazyLogging
 
 trait WeatherService {
   def requestCurrentWeather(lat: Double, lon: Double): IO[WeatherRes]
 }
 
-object WeatherService {
+object WeatherService extends LazyLogging {
   final case class WeatherError(e: Throwable) extends RuntimeException
 
   def impl(client: Client[IO], config: AppConf): WeatherService = new WeatherService {
@@ -32,6 +33,7 @@ object WeatherService {
       val req = GET(path(lat, lon))
       client
         .expect[WeatherRes](req)
+        .onError(e => IO(logger.error(e.getMessage, e)))
         .adaptError { case t => WeatherError(t) } // Prevent Client Json Decoding Failure Leaking
     }
   }
